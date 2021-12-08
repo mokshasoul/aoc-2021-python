@@ -8,3 +8,6 @@ class Submarine:
         self.epsilon_rate = 0
         self.oxygen_generator_rate = 0
         self.carbon_dioxide_scrubber = 0
+    
+
+ 
