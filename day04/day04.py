@@ -13,6 +13,7 @@ class BingoGame:
         self.bingo_counter = 0
         self.bingo_winner_track = {}
         self.winning_idx = []
+        self.winning_idx_number = {}
 
     def update_bingo_numbers(self, numbers_line: str) -> None:
         self.bingo_numbers = list(map(int, re.findall(r"\d+", numbers_line)))
@@ -54,22 +55,16 @@ class BingoGame:
         return -1, -1
     
     def loose_bingo(self):
-        target = 0
+        win_idx, win_number = (-1,-1)
         for number in self.bingo_numbers:
             for idx, bingo_matrix in self.bingo_matrix.items():
                 bingo_matrix: np.ndarray
-                if number in bingo_matrix:
+                if number in bingo_matrix and idx not in self.winning_idx:
                     x,y = np.where(bingo_matrix == number)
                     self.bingo_winner_track[idx][x[0],y[0]] = 0
-            win_idx, flag = self.register_winning_matrix()
+            self.register_winning_matrix(number=number)
 
-            if number == 13:
-                print(win_idx)
-            if len(self.winning_idx)-1 == self.bingo_counter and flag:
-                return number, win_idx
-
-
-        return -1, -1
+        return self.winning_idx[-1], self.winning_idx_number.get(self.winning_idx[-1])
 
     def is_there_winner(self):
         idx: int
@@ -81,26 +76,24 @@ class BingoGame:
 
         return -1, False
 
-    def register_winning_matrix(self):
+    def register_winning_matrix(self, number):
         idx: int
         for idx, matrix in self.bingo_winner_track.items():
             col_sum = np.sum(matrix, axis=0)
             row_sum = np.sum(matrix, axis=1)
             if 0 in col_sum or 0 in row_sum:
-                if idx in self.bingo_winner_track:
+                if idx in self.winning_idx:
                     continue
                 self.winning_idx.append(idx)
-                return idx, True
-
-        return -1, False
+                self.winning_idx_number[idx] = number
 
     def calculate_matrix_sum(self, idx, number):
         print(np.sum(np.multiply(self.bingo_matrix[idx],self.bingo_winner_track[idx]))*number)
 
 
 if __name__ == "__main__":
+    file_name = "test.txt"
     file_name = 'day04.txt'
-    # file_name = "test.txt"
     input_file = Path(__file__).parent / file_name
 
     bingo = BingoGame()
@@ -109,5 +102,5 @@ if __name__ == "__main__":
     # bingo.print_bingo_map()
     win_idx, number = bingo.play_bingo()
     bingo.calculate_matrix_sum(win_idx, number)
-    loose_idx, numer = bingo.loose_bingo()
+    loose_idx, number = bingo.loose_bingo()
     bingo.calculate_matrix_sum(loose_idx, number)
