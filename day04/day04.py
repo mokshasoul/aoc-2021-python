@@ -24,7 +24,7 @@ class BingoGame:
         self.bingo_winner_track[self.bingo_counter]  = np.ones_like(tmp_array)
         self.bingo_counter = self.bingo_counter + 1
 
-    def parse_bingo_text(self, text: list) -> None:
+    def parse_bingo_text(self, text: List) -> None:
         bingo_matrix_tmp = []
         for idx, line in enumerate(text):
             if idx == 0:
