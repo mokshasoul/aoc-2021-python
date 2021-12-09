@@ -15,6 +15,8 @@ class Hydrothermal:
     def create_ventilation_map(self,max_tiles: int) -> None:
         self.ventilation_map = np.zeros((max_tiles+1, max_tiles+1),dtype=np.int32)
 
+    def calculate_overlapping_lines(self):
+        return np.count_nonzero(self.ventilation_map >= 2)
     def populate_map(self):
         coord_pair: np.ndarray
         for coord_pair in self.coords_system:
@@ -55,9 +57,9 @@ class Hydrothermal:
 
 if __name__ == "__main__":
     file_name = 'test05.txt'
-    # file_name = 'day05.txt'
+    file_name = 'day05.txt'
     file_text = (Path(__file__).parent / file_name).read_text().splitlines()
     hydrothermal_system = Hydrothermal()
     hydrothermal_system.parse_text(file_text=file_text)
     hydrothermal_system.populate_map()
-    print(hydrothermal_system.ventilation_map)
+    print(hydrothermal_system.calculate_overlapping_lines()) 
