@@ -55,20 +55,28 @@ class Hydrothermal:
             x1, y1 = source_coord
             x2, y2 = dest_coord
             x1_ge, y1_ge = np.greater_equal(source_coord, dest_coord)
-            x_iterator = x1 if x1_ge else x2
-            y_iterator = y1 if y1_ge else y2
-            vector_y_start = y1 if y1 < y2 else y2
-            vector_y_end = y1 if y1 > y2 else y2
-            vector_x_start = x1 if x1 < x2 else x2
-            vector_x_end = x1 if x1 > x2 else x2
-            if x1 != x2 and y1 != y2:
-                for vector_y, vector_x in product(
-                    range(vector_y_start, vector_y_end + 1),
-                    range(vector_x_start, vector_x_end + 1)
+            x_iterator = x1 
+            y_iterator = y1 
+            x_val = -1 if x1_ge else 1
+            y_val = -1 if y1_ge else 1
+            while True:
+                if(
+                    x1 == x2 or
+                    y1 == y2
                 ):
-                    self.ventilation_map[vector_y, vector_x] = (
-                        self.ventilation_map[vector_y, vector_x] + 1
-                        )
+                    break
+                self.ventilation_map[y_iterator, x_iterator] = (
+                    self.ventilation_map[y_iterator, x_iterator] + 1
+                )
+                if (
+                    x_iterator != x2 and
+                    y_iterator != y2
+                ):
+                    x_iterator = x_iterator + x_val
+                    y_iterator = y_iterator + y_val
+                else:
+                    break
+
 
     def parse_text(self, file_text: List[str]) -> None:
         tmp_coord_system = []
@@ -86,8 +94,9 @@ class Hydrothermal:
 
 
 if __name__ == "__main__":
-    file_name = "test05.txt"
-    # file_name = "day05.txt"
+    # file_name = "test05.txt"
+    # file_name = "test05_dup.txt"
+    file_name = "day05.txt"
     file_text = (Path(__file__).parent / file_name).read_text().splitlines()
     hydrothermal_system = Hydrothermal()
     hydrothermal_system.parse_text(file_text=file_text)
